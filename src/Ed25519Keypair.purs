@@ -5,6 +5,7 @@ import Data.Maybe
 import Control.Monad.Eff.Exception
 import Control.Bind ((=<<))
 import Control.Monad.Eff (kind Effect, Eff)
+import Control.Promise
 
 foreign import data BigChainDBDriver :: Type
 
@@ -36,11 +37,11 @@ foreign import makeEd25519Keypair :: forall eff.
 -- Amount is a number represented as a string in bigchaindb - not sure how we want to treat this
 type Amount = String
 
-foreign import data Condition = Type
+foreign import data Condition :: Type
 
-foreign import data Transaction = Type
+foreign import data Transaction :: Type
 
-foreign import data SignedTransaction = Type
+foreign import data SignedTransaction :: Type
 
 type Output =
   { condition :: Condition
@@ -56,7 +57,7 @@ foreign import makeOutput :: forall eff.
 foreign import makeEd25519Condition :: PublicKey -> Condition
 
 
-foreign import makeCreateTransaction :: forall eff asset metadata.
+foreign import makeCreateTransaction :: forall asset metadata.
                                         asset
                                      -> metadata
                                      -> Array Output
@@ -64,11 +65,16 @@ foreign import makeCreateTransaction :: forall eff asset metadata.
 
 foreign import signTransaction :: Transaction
                                -> PrivateKey
-                               -> SignedTranscation
+                               -> SignedTransaction
 
-foreign import data Connection = Type
+foreign import data Connection :: Type
+
+type BigChainUrl = String
+
+foreign import createConnection :: forall eff. BigChainUrl -> Eff (exception :: EXCEPTION | eff) Connection
 
 -- figure out how to deal with the returned promise in an Aff way
-foreign import postTransaction :: Connection
-                               -> SignedTranscation
-                               -> Eff (bigchain :: BIGCHAINDB | eff) ()
+foreign import postTransaction :: forall eff a.
+                                  Connection
+                               -> SignedTransaction
+                               -> Eff (bigchain :: BIGCHAINDB | eff) (Promise a)
