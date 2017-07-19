@@ -11,10 +11,11 @@ import Debug.Trace (spy)
 main :: forall e. Eff (console :: CONSOLE, bigchain :: BIGCHAINDB, exception :: EXCEPTION | e) Unit
 main = do
   log "Hello sailor!"
-  key <- makeEd25519Keypair bigChainDBDriver
-  output <- makeOutput (makeEd25519Condition key.publicKey) "1"
-  let transaction = makeCreateTransaction asset metadata [ output ]
-  let signedTransaction = spy $ signTransaction transaction key.privateKey
+  let driver = bigChainDBDriver
+  key <- makeEd25519Keypair driver
+  output <- makeOutput driver (makeEd25519Condition driver key.publicKey) "1"
+  let transaction = makeCreateTransaction driver asset metadata [ output ]
+  let signedTransaction = spy $ signTransaction driver transaction key.privateKey
   log $ "signedTransaction"
   where
     asset = { test: "Test" }

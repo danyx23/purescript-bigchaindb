@@ -50,20 +50,25 @@ type Output =
   }
 
 foreign import makeOutput :: forall eff.
-                                    Condition
-                                 -> Amount
-                                 -> Eff (exception :: EXCEPTION | eff) Output
+                                 BigChainDBDriver
+                              -> Condition
+                              -> Amount
+                              -> Eff (exception :: EXCEPTION | eff) Output
 
-foreign import makeEd25519Condition :: PublicKey -> Condition
+foreign import makeEd25519Condition :: BigChainDBDriver
+                                    -> PublicKey
+                                    -> Condition
 
 
 foreign import makeCreateTransaction :: forall asset metadata.
-                                        asset
-                                     -> metadata
-                                     -> Array Output
-                                     -> Transaction
+                                     BigChainDBDriver
+                                  -> asset
+                                  -> metadata
+                                  -> Array Output
+                                  -> Transaction
 
-foreign import signTransaction :: Transaction
+foreign import signTransaction :: BigChainDBDriver
+                               -> Transaction
                                -> PrivateKey
                                -> SignedTransaction
 
@@ -71,7 +76,9 @@ foreign import data Connection :: Type
 
 type BigChainUrl = String
 
-foreign import createConnection :: forall eff. BigChainUrl -> Eff (exception :: EXCEPTION | eff) Connection
+foreign import createConnection :: forall eff. BigChainDBDriver
+                                            -> BigChainUrl
+                                            -> Eff (exception :: EXCEPTION | eff) Connection
 
 -- figure out how to deal with the returned promise in an Aff way
 foreign import postTransaction :: forall eff a.

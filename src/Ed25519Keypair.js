@@ -9,29 +9,37 @@ exports.makeEd25519Keypair = function makeEd25519Keypair(driver) {
 
 // TODO; give bigchaindb as first argument to all functions
 
-exports.makeOutput = function makeOutput(condition) {
-  return function(amount) {
-    return function() {
-      return BigchainDB.Transaction.makeOutput(condition, amount);
+exports.makeOutput = function makeOutput(driver) {
+  return function(condition) {
+    return function(amount) {
+      return function() {
+        return driver.Transaction.makeOutput(condition, amount);
+      }
     }
   }
 }
 
-exports.makeEd25519Condition = function makeEd25519Condition(publickey) {
-  return BigchainDB.Transaction.makeEd25519Condition(publickey);
+exports.makeEd25519Condition = function makeEd25519Condition(driver) {
+  return function(publicKey) {
+    return driver.Transaction.makeEd25519Condition(publicKey);
+  }
 }
 
-exports.makeCreateTransaction = function makeCreateTransaction(asset) {
-  return function(metadata) {
-    return function(outputs) {
-      return BigchainDB.Transaction.makeCreateTransaction(asset, metadata, outputs);
+exports.makeCreateTransaction = function makeCreateTransaction(driver) {
+  return function(asset) {
+    return function(metadata) {
+      return function(outputs) {
+        return driver.Transaction.makeCreateTransaction(asset, metadata, outputs);
+      }
     }
   }
 }
 
-exports.signTransaction = function signTransaction(transaction) {
-  return function(privateKey) {
-    return BigchainDB.Transaction.signTransaction(privateKey);
+exports.signTransaction = function signTransaction(driver) {
+  return function(transaction) {
+    return function(privateKey) {
+      return driver.Transaction.signTransaction(transaction, privateKey);
+    }
   }
 }
 
@@ -43,6 +51,10 @@ exports.postTransaction = function postTransaction(connection) {
   }
 }
 
-exports.createConnection = function createConnection(bigChainUrl) {
-  return new BigchainDB.Connection(bigChainUrl);
+exports.createConnection = function createConnection(driver) {
+  return function(bigChainUrl) {
+    return function() {
+      return new driver.Connection(bigChainUrl);
+    }
+  }
 }
