@@ -1,11 +1,10 @@
 module Main where
 
-import Prelude
+import Prelude (Unit, bind, discard, ($))
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
-import Control.Monad.Eff.Exception
+import Control.Monad.Eff.Exception (EXCEPTION)
 import BigChainDB
-import Data.Newtype (unwrap)
 import Debug.Trace (spy)
 
 main :: forall e. Eff (console :: CONSOLE, bigchain :: BIGCHAINDB, exception :: EXCEPTION | e) Unit
