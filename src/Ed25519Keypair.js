@@ -27,11 +27,9 @@ exports.signTransactionImpl = function signTransaction(driver, transaction, priv
   return driver.Transaction.signTransaction(transaction, privateKey);
 }
 
-exports.postTransactionImpl = function postTransaction(connection) {
-  return function(signedTransaction) {
-    return function() {
-      return connection.postTransaction(signedTransaction);
-    }
+exports.postTransactionImpl = function postTransaction(connection, signedTransaction) {
+  return function() {
+    return connection.postTransaction(signedTransaction);
   }
 }
 
